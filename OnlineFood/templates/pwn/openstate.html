@@ -4,14 +4,12 @@
 
 {% block admin_welcome %}
 
-{#    <div class="col-sm">#}
-{#          <h1>Sate page</h1>#}
-{#    </div>#}
+
 <table align="center">
         <tr align="center"><th colspan="3">State Operations</th></tr>
         <tr><th></th></tr>
-</table>
 
+<tr>
 
 
 {% if udata %}
@@ -31,10 +29,14 @@
             <th><button type="submit">Update</button></th>
         </tr>
     </table>
+    </form>
+
 
     </form>
+    </tr>
+    <tr>
     {% endif %}
-
+        {% if not udata   %}
         <form action="{% url 'savestate' %}" method="post" enctype="multipart/form-data">
 {% csrf_token %}
     <table align="center">
@@ -48,15 +50,29 @@
             </th>
             <th><button type="submit">save</button></th>
         </tr>
+    {% endif %}
+</tr>
+
+
+
+
+
+
+
+
+<tr>
         {% for x in messages %}
             <tr align="center">
                 <th colspan="3">{{ x }}</th>
             </tr>
         {% endfor %}
+    </tr>
 
     </table>
 </form>
+    </tr>
         <br><br><br>
+<tr>
     <table align="center" border="2" width="500px" style="text-align: center">
         <tr>
             <th>Id</th>
@@ -75,11 +91,28 @@
                 <th><a href="{% url 'updatestate' %}?id={{ x.id }}"><img src="{% static 'images/update.png' %}" height="20px" width="20px"></a> </th>
 
                 <th>
-                    <a href="{% url 'sdelete' %}?sid={{ x.id }}"><img src="{% static 'images/delete.png' %}" height="20px" width="20px"></a>
+                    <a href="{% url 'sdelete' %}?sid={{ x.id }}" onclick="return confirm('Are you sure want to delete record?');"><img src="{% static 'images/delete.png' %}" height="20px" width="20px"></a>
                 </th>
 
             </tr>
         {% endfor %}
-        </table>
+    {% if remaining_data %}
+        {% for x in remaining_data %}
+            <tr>
+                <th>{{x.id}}</th>
+                <th>{{ x.name }}</th>
+                <th><img src="{{ x.photo.url }}" width="40" height="40"></th>
 
+                <th><img src="{% static 'images/update.png' %}" height="20px" width="20px" style="opacity: 20%"> </th>
+
+                <th>
+                    <img src="{% static 'images/delete.png' %}" height="20px" width="20px" style="opacity: 20%">
+                </th>
+
+            </tr>
+        {% endfor %}
+    {% endif %}
+        </table>
+</tr>
+</table>
 {% endblock %}

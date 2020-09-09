@@ -27,6 +27,7 @@ def welcome(request):
 
 def openState(request):
     sm = StateModel.objects.all()
+
     return render(request,"pwn/openstate.html",{'data':sm})
 
 
@@ -59,13 +60,28 @@ def updatestate(request):
     sid = request.GET.get('id')
     print(sid)
     sm = StateModel.objects.get(id=sid)
+    id = request.GET.get('sid')
+    a = StateModel.objects.exclude(id=id)
 
-    return render(request,'pwn/openstate.html',{'udata':sm})
+
+    return render(request,'pwn/openstate.html',{'udata':sm,"remaining_data":a})
 
 
 def updatestateid(request):
-    StateModel.objects.filter(id=request.GET.get('sid')).update(name=request.POST.get('t1'),photo=request.FILES.get('t2'))
-    return redirect('state')
+    #StateModel.objects.filter(id=request.GET.get('sid')).update(name=request.POST.get('t1'),photo=request.FILES.get('t2'))
+
+    id=request.GET.get('sid')
+    obj=StateModel.objects.get(id=id)
+
+    name = request.POST.get('t1')
+    photo = request.FILES.get('t2')
+    obj.name=name
+    obj.photo=photo
+    obj.save()
+    messages.success(request, 'updated success')
+    #photo=request.FILES.get('t2')
+    #print(photo)
+    return openState(request)
 
 
 def sdelete(request):
@@ -77,20 +93,33 @@ def sdelete(request):
 def savecity(request):
     cid = request.POST.get('t2')
     name = request.POST.get('t1')
-    print(cid,name)
-    CityModel(name=request.POST.get('t1'),photo=request.POST.get('t2'),city_state_id=cid).save()
+    photo = request.FILES.get('t3')
+    print(cid,name,photo)
+
+    print(photo)
+    CityModel(name=request.POST.get('t1'),photo=request.FILES.get('t3'),city_state_id=cid).save()
     messages.success(request,'city is added')
     return redirect('city')
 
 
 def updatecity(request):
     cm = CityModel.objects.filter(id=request.GET.get('cid'))
+    id = request.GET.get('cid')
+    a=CityModel.objects.exclude(id=id)
 
-    return render(request,'pwn/opencity.html',{'ucity':cm})
+
+    return render(request,'pwn/opencity.html',{'ucity':cm,'remaining_data':a})
 
 
 def updatecityid(request):
-    CityModel.objects.filter(id=request.GET.get('cid')).update(name=request.POST.get('t1'),photo =request.FILES.get('t3'))
+    id = request.GET.get('cid')
+    name = request.POST.get('t1')
+    photo = request.FILES.get('t3')
+    #CityModel.objects.filter(id=request.GET.get('cid')).update(name=request.POST.get('t1'),photo =request.FILES.get('t3'))
+    obj=CityModel.objects.get(id=id)
+    obj.name=name
+    obj.photo=photo
+    obj.save()
     messages.success(request,'updated success')
     return openCity(request)
 
@@ -111,12 +140,20 @@ def updatecuisine(request):
     cid = request.GET.get('cid')
 
     cm = CuisineModel.objects.filter(id=cid)
-    return render(request,'pwn/opencuisine.html',{'update':cm})
+    a=CuisineModel.objects.exclude(id=cid)
+    return render(request,'pwn/opencuisine.html',{'update':cm,"remaining_data":a})
 
 
 def updatecuisineid(request):
-    CuisineModel.objects.filter(id=request.GET.get('cid')).update(type=request.POST.get('t1'),
-                                                                photo=request.FILES.get('t2'))
+    # CuisineModel.objects.filter(id=request.GET.get('cid')).update(type=request.POST.get('t1'),
+    #                                                 photo=request.FILES.get('t2'))
+    id = request.GET.get('cid')
+    obj=CuisineModel.objects.get(id=id)
+    photo = request.FILES.get('t2')
+    type = request.POST.get('t1')
+    obj.type=type
+    obj.photo=photo
+    obj.save()
     messages.success(request,'cuisine updated')
     return redirect('cuisine')
 
